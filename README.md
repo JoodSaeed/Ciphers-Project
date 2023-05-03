@@ -1,9 +1,9 @@
 # Text encryption
 
-Description of the app:
+# Description of the app:
 A simple web application to encrypt and decrypt textual information that the user keys in using Python language. This project would help you break down the structure of algorithms like Caesar Cipher, Vigenere Cipher, Railfence Cipher, Autokey Cipher, Playfair Cipher, Beaufort Cipher. This is an Open Source project.
 
-Instructions on how to run the web app:
+# Instructions on how to run the web app:
  - Install Flask by running the command: 'pop install flask'
 - Once Flask is installed, you can start your Flask app by running the command: 'python app.py'
 - Go to Browser 

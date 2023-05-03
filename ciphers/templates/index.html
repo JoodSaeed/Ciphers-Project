@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Include CSS stylesheet and JavaScript code -->
+    <!-- Use Flask's url_for() function to generate links to the files -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script type='text/javascript' src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <title>Cipher Encryption</title> 
+  </head>
+  <!-- Call the toggle function on load to make sure the key section appear -->
+  <body onload="toggleCipherKeyInput()">
+  <!-- Create an overlay div with a transparent color -->
+  <div  class="overlay">
+    <!-- Create two columns to separate the form and result sections -->
+    <div class="column" >
+    <!-- Add a header to the form section -->
+    <h1>Cipher Encryption</h1>
+    <!-- Form for entering the cipher type, text, key and mode -->
+    <!--
+      while submit, run the request with post method to send data to the server with all requested values by IDs
+      the selected cipher "type", the text "plaintext", the key "key_'ciphername'" and encryption mode "mode"
+      and as actione load the main page "/" , default 127.0.0.1:5000 while take the result from server   
+    -->
+    <form action="/" method="post">
+      <!-- Add a label for the cipher type select element -->
+      <label for="type">Cipher: </label>
+      <!-- Display a note about the selected cipher imported by the app from data.py file -->
+      <span>{{ texts.notes.type }}</span>
+      <!-- Create a select element for choosing the cipher type -->
+      <!--  
+        Call toggleCipherKeyInput() function whenever the select value changes 
+        to show the key section according to selected cipher
+      -->
+      <select id="type" name="type" onchange="toggleCipherKeyInput()">
+        <!-- Set the value of the selected cipher to be sent to the server -->
+        <option value="ceaser_cipher">Ceaser Cipher</option>
+        <option value="vigenere_cipher">Vigenere Cipher</option>
+        <option value="rail_fence_cipher">Rail Fence Cipher</option>
+        <option value="autokey_cipher">Autokey Cipher</option>
+        <option value="playfair_cipher">Playfair Cipher</option>
+        <option value="beaufort_cipher">Beaufort Cipher</option>
+      </select>
+      
+      <!-- Textarea section -->
+      <label for="plaintext">text: </label>
+      <!-- Display a note about the plaintext textarea imported by the app from data.py file -->
+      <span>{{ texts.notes.plaintext }}<br></span>
+        <!-- Clear button, remove all text from textarea using a js script -->
+        <div class="column">
+          <button type="button" id="clear-text-btn" class="btn-header" value="Cleared !" title="Clear the text area">Clear</button>
+        </div>
+        <!-- Paste button, Paste text from clipboard to textarea using a js script -->
+        <div class="column">
+          <button type="button" id="paste-text-btn" class="btn-header" value="Pasted !" title="Paste from clipboard">Paste</button>
+        </div>
+      <!-- the textarea for the plaintext or the ciphertext -->
+      <textarea id="plaintext" name="plaintext"></textarea>
+
+      <!--
+        This part of code defines the key input fields for different ciphers with a hidden style by default.
+        using javascript while change the selected cipher type the function change display from none to block
+        and change the previous selected from block to hiden.
+        the descriptions and notes about the key imported by the app to the template in dict format
+      -->
+      <!-- Ceaser cipher key input -->
+      <div class="ceaser_cipher-key-input cipher-key-input" style="display:none;">
+        <label class="description">{{ texts.description.ceaser }}</label>
+        <label>The Key: </label><span>{{ texts.key.ceaser }}</span>
+        <!-- the ceaser cipher demand a key in digit format, integer between 1 and 25 -->
+        <input type="number" min="1" max="25" step="1" id="key_ceaser" name="key_ceaser">
+      </div>
+      
+      <!-- Vigenere cipher key input -->
+      <div class="vigenere_cipher-key-input cipher-key-input" style="display:none;">
+        <label class="description">{{ texts.description.vigenere }}</label>
+        <label>The Key: </label><span>{{ texts.key.vigenere }}</span>
+        <input type="text" id="key_vigenere" name="key_vigenere">
+      </div>
+
+      <!-- Rail Fence cipher key input -->
+      <div class="rail_fence_cipher-key-input cipher-key-input" style="display:none;">  
+        <label class="description">{{ texts.description.rail_fence }}</label>
+        <label for="key_rail_fence">The Key: </label>
+        <span class="descripts">{{ texts.key.rail_fence }}</span>
+        <!-- the vigenere cipher demand a key in digit format, integer more or equal than 2 -->
+        <input type="number" min="2" step="1" id="key_rail_fence" name="key_rail_fence">
+      </div>
+
+      <!-- Autokey cipher key input -->
+      <div class="autokey_cipher-key-input cipher-key-input" style="display:none;">
+        <label class="description">{{ texts.description.autokey }}</label>
+        <label for="key_autokey">The Key: </label>
+        <span class="descripts">{{ texts.key.autokey }}</span>
+        <input type="text" id="key_autokey" name="key_autokey">
+      </div>
+
+      <!-- Playfair cipher key input -->
+      <div class="playfair_cipher-key-input cipher-key-input" style="display:none;">
+        <label class="description">{{ texts.description.playfair }}</label>
+        <label for="key_playfair">The Key: </label>
+        <span class="descripts">{{ texts.key.playfair }}</span>
+        <input type="text" id="key_playfair" name="key_playfair">
+      </div>
+
+      <!-- Beaufort cipher key input -->
+      <div class="beaufort_cipher-key-input cipher-key-input" style="display:none;">
+        <label class="description">{{ texts.description.beaufort }}</label>
+        <label for="key_beaufort">The Key: </label>
+        <span class="descripts">{{ texts.key.beaufort }}</span>
+        <input type="text" id="key_beaufort" name="key_beaufort">
+      </div>
+
+      <!-- Select element for choosing the mode -->
+      <div>
+        <label for="mode">Mode: </label>
+        <span>{{ texts.notes.mode }}</span>
+        <select id="mode" name="mode">
+          <option value="encrypt">Encrypt</option>
+          <option value="decrypt">Decrypt</option>
+        </select>
+      </div>
+      <!-- Submit button -->
+
+        <input type="submit" value="Submit">
+
+    </form>
+  </div>
+  <!-- Column for the result -->
+  <div class="column">
+    <!-- If a result is generated, show the result and the buttons copy text and downloading the file -->
+    {% if result %}
+      <h1>Result:</h1>  
+      <div class="result">
+        <div class="row header">
+          <div class="column"><button id="copy-button" class="btn-header" value="Copied !" title="Copy the result text to Clipboard">Copy</button></div>
+          <div class="column"><button id="download-btn" class="btn-header" value="Downloading..." title="Download the Result text as file">Download</button></div>
+        </div>
+          <p class="result_text">{{result}}</p>
+      </div>
+    {% endif %}
+    </div>
+  </div>
+  </body>
+</html>
